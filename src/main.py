@@ -17,11 +17,17 @@ pygame.display.set_caption("game")
 
 
 #載入
-playerimg=pygame.image.load("assets/image/character.png")
+playerimg=pygame.image.load("assets/image/character.png").convert()
+playereye=pygame.image.load("assets/image/ceyes.png").convert_alpha()
+particleimg=pygame.image.load("assets/image/particle1.png").convert_alpha()
+
 
 
 world=World("assets/testmap1.tmx")
-player=Player(32,480,playerimg)
+player=Player(32,480,playerimg,playereye,particleimg)
+
+
+
 dt=0
 run=True
 while run:
@@ -29,10 +35,10 @@ while run:
         if event.type==pygame.QUIT:
             run=False
             break
-    player.update(dt,world.collision_rects)
     gameSurface.fill((119,221,255))
+    player.update(dt,world.collision_rects)
     world.draw(gameSurface)
-    player.draw(gameSurface)
+    player.draw(gameSurface,dt)
     screen.blit(gameSurface,(0,0))
     pygame.display.flip()
     dt=clock.tick(60)/1000
