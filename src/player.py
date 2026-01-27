@@ -1,18 +1,4 @@
 import pygame
-import pytmx
-
-from pytmx.util_pygame import load_pygame
- 
-pygame.init()
-
-clock=pygame.time.Clock()
-
-winW,winH=960,640
-
-screen=pygame.display.set_mode((winW,winH))
-gameSurface=pygame.Surface((winW,winH))
-
-pygame.display.set_caption("game")
 
 #player
 class Player:
@@ -61,46 +47,3 @@ class Player:
         self.move_y(dt,collision_rect)
     def draw(self,nowsurface):
         nowsurface.blit(self.image,self.rect)
-
-#地圖
-tmx_map = pytmx.load_pygame("testmap1.tmx")
-
-collision_rects=[]
-collision_layer=tmx_map.get_layer_by_name("collision")
-for x,y,gid in collision_layer:
-    if gid:
-        rect=pygame.Rect(32*x,32*y,32,32)
-        collision_rects.append(rect)
-
-mapSurface=pygame.Surface((winW,winH),pygame.SRCALPHA)
-for layer in tmx_map.visible_layers:
-    if layer.name=="collision":
-        continue
-    if isinstance(layer,pytmx.TiledTileLayer):
-        for x,y,gid in layer:
-            if gid:
-                tile=tmx_map.get_tile_image_by_gid(gid)
-                mapSurface.blit(tile,(x*32,y*32))
-#載入
-playerimg=pygame.image.load("character.png")
-
-
-
-player=Player(32,480,playerimg)
-dt=0
-run=True
-while run:
-    for event in pygame.event.get():
-        if event.type==pygame.QUIT:
-            run=False
-            break
-    
-    player.update(dt,collision_rects)
-
-    gameSurface.fill((119,221,255))
-    gameSurface.blit(mapSurface,(0,0))
-    player.draw(gameSurface)
-    screen.blit(gameSurface,(0,0))
-    pygame.display.flip()
-    dt=clock.tick(60)/1000
-pygame.quit()
