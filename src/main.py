@@ -1,7 +1,5 @@
 import pygame
-import pytmx
 
-from pytmx.util_pygame import load_pygame
 from player import Player 
 from world import World
 
@@ -22,10 +20,13 @@ playerimg=pygame.image.load("assets/image/character.png").convert()
 playereye=pygame.image.load("assets/image/ceyes.png").convert_alpha()
 particleimg=pygame.image.load("assets/image/particle1.png").convert_alpha()
 fireballimg=pygame.image.load("assets/image/fireball.png").convert_alpha()
-
+fireballparimg=pygame.image.load("assets/image/particle2.png").convert_alpha()
 
 world=World("assets/testmap1.tmx")
-player=Player(32,480,playerimg,playereye,particleimg,fireballimg)
+
+
+q,w,e=1,2,3
+player=Player(32,480,playerimg,playereye,particleimg,fireballimg,fireballparimg,q,w,e)
 
 
 
