@@ -1,6 +1,8 @@
 import pygame
 from particle import Particle
-from fireball import Fireball
+from projectile import Projectile
+from projectile import Fireball
+from projectile import Bounceball
 from skills import SKILLS
 from skillmanager import SkillManager
 import math
@@ -8,11 +10,11 @@ import random
 
 
 particles=[]
-fireballs=[]
+projectiles=[]
 skill123=[]
 #player
 class Player:
-    def __init__(self,x,y,pimage,eyeimg,particleimg,fireballimg,fireballpimg,s1,s2,s3):
+    def __init__(self,x,y,s1,s2,s3,pimage,eyeimg,particleimg,proimg,propimg,bounceballimg):
         #position
         self.vx=0
         self.vy=0
@@ -21,10 +23,10 @@ class Player:
         #img
         self.image=pimage
         self.eye=eyeimg
-        self.fireball=fireballimg
+        self.proimg=proimg
         self.rect=self.image.get_rect(topleft=(x,y))
-        self.fireballpimg=fireballpimg
-
+        self.propimg=propimg
+        self.bounceballimg=bounceballimg
         #else
         self.g=1200
         self.on_ground=False
@@ -35,9 +37,9 @@ class Player:
         self.q_cooldown=0
         self.q_amount=0
         self.q_smallcd=0
-        skill123.append(SkillManager(1))
-        skill123.append(SkillManager(2))
-        skill123.append(SkillManager(3))
+        skill123.append(SkillManager(s1))
+        skill123.append(SkillManager(s2))
+        skill123.append(SkillManager(s3))
     def handle_input(self):
         keys=pygame.key.get_pressed()
         self.vx=0
@@ -93,9 +95,8 @@ class Player:
             if sk.smallcd==0 and sk.amount>0:
                 sk.smallcd=sk.atkspeed
                 sk.amount-=1
-                fireballs.append(Fireball(self.rect.x+16,self.rect.y+16,self.fireball,self.fireballpimg))
+                self.summon_projectile(sk.skillname,collision_rect)
     def draw(self,nowsurface,dt,mx,my):
-
         dx,dy=mx-self.rect.x-16,my-self.rect.y-16
         if dx>4:
             dx=4
@@ -113,8 +114,14 @@ class Player:
             p.draw(nowsurface)
             if p.life<=0:
                 particles.remove(p)
-        for f in fireballs[:]:
+        for f in projectiles[:]:
             f.update(dt)
             f.draw(nowsurface,dt)
             if f.life<=0:
-                fireballs.remove(f)
+                projectiles.remove(f)
+        Projectile.draw_particles(self,dt,nowsurface)
+    def summon_projectile(self,name,collision_rect):
+        if name=="fireball":
+            projectiles.append(Fireball(self.rect.x+16,self.rect.y+16,self.proimg,self.propimg))
+        if name=="bounceball":
+            projectiles.append(Bounceball(self.rect.x+16,self.rect.y+16,self.bounceballimg,self.propimg,collision_rect,500))

@@ -7,11 +7,11 @@ SKILLS={
         "atkspeed":0.1
     },
     2:{
-       "name":"slash",
-        "cd":1.0,
-        "dmg":50 ,
-        "amount":1,
-        "atkspeed":None
+       "name":"bounceball",
+        "cd":3.0,
+        "dmg":10 ,
+        "amount":5,
+        "atkspeed":0.2
     },
     3:{
         "name":"none",
