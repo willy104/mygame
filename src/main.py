@@ -4,6 +4,7 @@ import pytmx
 from pytmx.util_pygame import load_pygame
 from player import Player 
 from world import World
+
 pygame.init()
 
 clock=pygame.time.Clock()
@@ -20,11 +21,11 @@ pygame.display.set_caption("game")
 playerimg=pygame.image.load("assets/image/character.png").convert()
 playereye=pygame.image.load("assets/image/ceyes.png").convert_alpha()
 particleimg=pygame.image.load("assets/image/particle1.png").convert_alpha()
-
+fireballimg=pygame.image.load("assets/image/fireball.png").convert_alpha()
 
 
 world=World("assets/testmap1.tmx")
-player=Player(32,480,playerimg,playereye,particleimg)
+player=Player(32,480,playerimg,playereye,particleimg,fireballimg)
 
 
 

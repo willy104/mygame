@@ -1,21 +1,30 @@
 import pygame
 from particle import Particle
+from fireball import Fireball
 import math
 import random
+
+
 particles=[]
+fireballs=[]
 #player
 class Player:
-    def __init__(self,x,y,pimage,eyeimg,particleimg):
+    def __init__(self,x,y,pimage,eyeimg,particleimg,fireballimg):
+        #position
         self.vx=0
         self.vy=0
         self.speed=200
+        #img
         self.image=pimage
         self.eye=eyeimg
+        self.fireball=fireballimg
         self.rect=self.image.get_rect(topleft=(x,y))
+        #else
         self.g=1200
         self.on_ground=False
         self.double_jump=False
         self.pimg=particleimg
+        #self.q_cooldown=
     def handle_input(self):
         keys=pygame.key.get_pressed()
         self.vx=0
@@ -23,7 +32,9 @@ class Player:
             self.vx=-self.speed
         if keys[pygame.K_d]:
             self.vx+=self.speed
-        if keys[pygame.K_w]:
+        if keys[pygame.K_q]:
+            fireballs.append(Fireball(self.rect.x+16,self.rect.y+16,self.fireball))
+        if keys[pygame.K_SPACE]:
             if self.on_ground or (self.double_jump and not self.w_down):
                 for _ in range(20):
                     particles.append(Particle(self.rect.x+16,self.rect.y+32,self.pimg))
@@ -82,3 +93,8 @@ class Player:
             p.draw(nowsurface)
             if p.life<=0:
                 particles.remove(p)
+        for f in fireballs[:]:
+            f.update(dt)
+            f.draw(nowsurface)
+            if f.life<=0:
+                fireballs.remove(f)
