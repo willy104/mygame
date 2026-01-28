@@ -17,18 +17,19 @@ class Player:
         self.vx=0
         self.vy=0
         self.speed=200
+
         #img
         self.image=pimage
         self.eye=eyeimg
         self.fireball=fireballimg
         self.rect=self.image.get_rect(topleft=(x,y))
         self.fireballpimg=fireballpimg
+
         #else
         self.g=1200
         self.on_ground=False
         self.double_jump=False
         self.pimg=particleimg
-
 
         #skills
         self.q_cooldown=0
@@ -44,13 +45,14 @@ class Player:
             self.vx=-self.speed
         if keys[pygame.K_d]:
             self.vx+=self.speed
-        if keys[pygame.K_q] and skill123[0].cooling ==0:
+        if keys[pygame.K_q] and skill123[0].cooling == 0:
             skill123[0].skilluse()
-        print(skill123[0].smallcd,skill123[1].amount)
+        if keys[pygame.K_w] and skill123[1].cooling == 0:
+            skill123[1].skilluse()
         if keys[pygame.K_SPACE]:
             if self.on_ground or (self.double_jump and not self.space_down):
                 for _ in range(20):
-                    particles.append(Particle(self.rect.x+16,self.rect.y+32,self.pimg))
+                    particles.append(Particle(self.rect.x+16,self.rect.y+32,random.uniform(-50,50),random.uniform(100,200),300,self.pimg))
                 self.vy=-500
                 self.space_down=True
                 if not self.on_ground :
@@ -81,7 +83,7 @@ class Player:
                     self.rect.top=tile.bottom
                     self.vy=0
         if  abs(self.vy)>30 and not random.randint(0,4):
-            particles.append(Particle(self.rect.x+16,self.rect.y+16,self.pimg))
+            particles.append(Particle(self.rect.x+16,self.rect.y+16,random.uniform(-30,30),random.uniform(-30,30),0,self.pimg))
     def update(self,dt,collision_rect):
         self.handle_input()
         self.move_x(dt,collision_rect)
@@ -92,8 +94,8 @@ class Player:
                 sk.smallcd=sk.atkspeed
                 sk.amount-=1
                 fireballs.append(Fireball(self.rect.x+16,self.rect.y+16,self.fireball,self.fireballpimg))
-    def draw(self,nowsurface,dt):
-        mx,my=pygame.mouse.get_pos()
+    def draw(self,nowsurface,dt,mx,my):
+
         dx,dy=mx-self.rect.x-16,my-self.rect.y-16
         if dx>4:
             dx=4

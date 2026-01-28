@@ -19,10 +19,8 @@ class SkillManager:
     def update(self,dt):
         if self.cooling>0:
             self.cooling-=dt
-        if self.smallcd>0:
+        if not self.smallcd==None and self.smallcd>0 :
             self.smallcd-=dt
-
-        self.cooling = max(0, self.cooling)
-        if not self.smallcd==None:
             self.smallcd=max(0,self.smallcd)
-        
+        self.cooling = max(0, self.cooling)
+            

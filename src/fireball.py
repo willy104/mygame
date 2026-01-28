@@ -1,7 +1,7 @@
 import pygame
 from particle import Particle
 import math
-
+import random
 particles=[]
 class Fireball:
     def __init__(self,x,y,img,pimg):
@@ -28,7 +28,7 @@ class Fireball:
             self.vy=0
         self.angle=math.degrees(math.atan2(-self.vy,self.vx))
     def update(self,dt):
-        particles.append(Particle(self.x-4,self.y-4,self.pimg))
+        particles.append(Particle(self.x-3,self.y-3,random.uniform(-50,50),random.uniform(-50,50),0,self.pimg))
         self.x+=self.vx*dt
         self.y+=self.vy*dt
         if self.isY:

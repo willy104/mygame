@@ -2,8 +2,10 @@ import pygame
 
 from player import Player 
 from world import World
+from targetmouselogo import TargetLogo
 
 pygame.init()
+pygame.mouse.set_visible(False)
 
 clock=pygame.time.Clock()
 
@@ -21,13 +23,15 @@ playereye=pygame.image.load("assets/image/ceyes.png").convert_alpha()
 particleimg=pygame.image.load("assets/image/particle1.png").convert_alpha()
 fireballimg=pygame.image.load("assets/image/fireball.png").convert_alpha()
 fireballparimg=pygame.image.load("assets/image/particle2.png").convert_alpha()
+targetimg=pygame.image.load("assets/image/targetlogo.png").convert_alpha()
+
 
 world=World("assets/testmap1.tmx")
 
 
 q,w,e=1,2,3
 player=Player(32,480,playerimg,playereye,particleimg,fireballimg,fireballparimg,q,w,e)
-
+target=TargetLogo(targetimg)
 
 
 dt=0
@@ -40,7 +44,10 @@ while run:
     gameSurface.fill((119,221,255))
     player.update(dt,world.collision_rects)
     world.draw(gameSurface)
-    player.draw(gameSurface,dt)
+    mx,my=pygame.mouse.get_pos()
+    player.draw(gameSurface,dt,mx,my)
+    target.update(mx,my)
+    target.draw(gameSurface)
     screen.blit(gameSurface,(0,0))
     pygame.display.flip()
     dt=clock.tick(60)/1000
