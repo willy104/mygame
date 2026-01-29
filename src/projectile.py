@@ -11,7 +11,7 @@ class Projectile:
         self.y=y
         self.img=img
         self.speed=speed
-        
+        self.rect = self.img.get_rect(center=(self.x, self.y))
         mx,my=pygame.mouse.get_pos()
         if (abs(mx-x)+abs(my-y)):
             self.isY=True
@@ -36,9 +36,21 @@ class Projectile:
             p.draw(nowsurface)
             if p.life<=0:
                 particles.remove(p)
-
-
-
+    def physic_bounce(self,pre_rect,tile):
+        if pre_rect.right <= tile.left and self.rect.right >tile.left:
+            self.rect.right=tile.left
+            self.vx*=-1
+        elif pre_rect.left >= tile.right and self.rect.left < tile.right:
+            self.rect.left=tile.right
+            self.vx*=-1
+        elif pre_rect.top >= tile.bottom and self.rect.top < tile.bottom:
+            self.rect.top=tile.bottom
+            self.vy*=-1
+        elif pre_rect.bottom <= tile.top and self.rect.bottom > tile.top:
+            self.rect.bottom=tile.top
+            self.vy*=-1
+        self.x,self.y=self.rect.center
+        self.angle=math.degrees(math.atan2(-self.vy,self.vx))
 class Fireball(Projectile):
     def __init__(self,x,y,img,pimg,a=2000):
         self.isY=False
@@ -69,34 +81,25 @@ class Fireball(Projectile):
 
 
 class Bounceball(Projectile):
-    def __init__(self,x,y,img,pimg,collision_rect,speed,bounce=4):
+    def __init__(self,x,y,img,pimg,collision_rect,speed,bounce=20):
         super().__init__(x,y,img,0,bounce,speed)
         self.pimg=pimg
         self.collision_rect=collision_rect
-        self.r_img=pygame.transform.rotate(self.img,self.angle)
-        self.r_rect=self.r_img.get_rect(center=(self.x,self.y))
+        
     def update(self,dt):
-        self.r_rect.x+=self.vx*dt
-        self.r_rect.y+=self.vy*dt
+        self.pre_rect=self.rect.copy()
+        self.x+=self.vx*dt
+        self.y+=self.vy*dt
+        self.rect.center=(self.x,self.y)
         for tile in self.collision_rect:
-            if self.r_rect.colliderect(tile):
-                dx=min(abs(self.r_rect.left-tile.right),abs(self.r_rect.right-tile.left))
-                dy=min(abs(self.r_rect.top-tile.bottom),abs(self.r_rect.bottom-tile.top))
+            if self.rect.colliderect(tile):
+                Projectile.physic_bounce(self,self.pre_rect,tile)
                 self.bounce-=1
-                if dx<dy:
-                    if self.r_rect.left-tile.right <= 0:
-                        self.r_rect.left=tile.right
-                    else:
-                        self.r_rect.right=tile.left
-                    self.vx*=-1
-                else:
-                    if self.r_rect.top-tile.bottom <= 0:
-                        self.r_rect.top=tile.bottom
-                    else:
-                        self.r_rect.bottom=tile.top
-                    self.vy*=-1
+                break
         if self.bounce<=0:
             self.life=0
     def draw(self,nowsurface,dt):
+        self.r_img=pygame.transform.rotate(self.img,self.angle)
+        self.r_rect=self.r_img.get_rect(center=(self.rect.center))
         nowsurface.blit(self.r_img,self.r_rect.topleft)
-        pygame.draw.rect(nowsurface,(255,0,0),self.r_rect,2)
+        #pygame.draw.rect(nowsurface,(255,0,0),self.r_rect,2)
