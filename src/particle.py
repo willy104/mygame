@@ -2,13 +2,13 @@ import pygame
 import random
 
 class Particle:
-    def __init__(self,x,y,vx,vy,g,img):
+    def __init__(self,x,y,vx,vy,g,life,img):
         self.x=x
         self.y=y
         self.vx=vx
         self.vy=vy
         self.g=g
-        self.life=random.uniform(0.3, 0.5)
+        self.life=life
         self.img=img
     def update(self,dt):
         self.life-=dt

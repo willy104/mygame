@@ -14,7 +14,7 @@ projectiles=[]
 skill123=[]
 #player
 class Player:
-    def __init__(self,x,y,s1,s2,s3,pimage,eyeimg,particleimg,proimg,propimg,bounceballimg):
+    def __init__(self,x,y,s1,s2,s3,pimage,eyeimg,particleimg,proimg,propimg,bounceballimg,bounceballpimg):
         #position
         self.vx=0
         self.vy=0
@@ -27,6 +27,7 @@ class Player:
         self.rect=self.image.get_rect(topleft=(x,y))
         self.propimg=propimg
         self.bounceballimg=bounceballimg
+        self.bounceballpimg=bounceballpimg
         #else
         self.g=1200
         self.on_ground=False
@@ -54,7 +55,7 @@ class Player:
         if keys[pygame.K_SPACE]:
             if self.on_ground or (self.double_jump and not self.space_down):
                 for _ in range(20):
-                    particles.append(Particle(self.rect.x+16,self.rect.y+32,random.uniform(-50,50),random.uniform(100,200),300,self.pimg))
+                    particles.append(Particle(self.rect.x+16,self.rect.y+32,random.uniform(-50,50),random.uniform(100,200),300,random.uniform(0.3,0.5),self.pimg))
                 self.vy=-500
                 self.space_down=True
                 if not self.on_ground :
@@ -85,7 +86,7 @@ class Player:
                     self.rect.top=tile.bottom
                     self.vy=0
         if  abs(self.vy)>30 and not random.randint(0,4):
-            particles.append(Particle(self.rect.x+16,self.rect.y+16,random.uniform(-30,30),random.uniform(-30,30),0,self.pimg))
+            particles.append(Particle(self.rect.x+16,self.rect.y+16,random.uniform(-30,30),random.uniform(-30,30),0,random.uniform(0.3,0.5),self.pimg))
     def update(self,dt,collision_rect):
         self.handle_input()
         self.move_x(dt,collision_rect)
@@ -124,4 +125,4 @@ class Player:
         if name=="fireball":
             projectiles.append(Fireball(self.rect.x+16,self.rect.y+16,self.proimg,self.propimg))
         if name=="bounceball":
-            projectiles.append(Bounceball(self.rect.x+16,self.rect.y+16,self.bounceballimg,self.propimg,collision_rect,500))
+            projectiles.append(Bounceball(self.rect.x+16,self.rect.y+16,self.bounceballimg,self.bounceballpimg,collision_rect,500))

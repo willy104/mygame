@@ -12,7 +12,7 @@ class World:
         collision_layer=self.tmx_map.get_layer_by_name("collision")
         for x,y,gid in collision_layer:
             if gid:
-                rect=pygame.Rect(32*x,32*y,32,32)
+                rect=pygame.Rect(32*x-32,32*y-32,32,32)
                 self.collision_rects.append(rect) 
     def build_map(self):
         width=self.tmx_map.width*self.tmx_map.tilewidth
@@ -26,6 +26,6 @@ class World:
                 for x,y,gid in layer:
                     if gid:
                         tile=self.tmx_map.get_tile_image_by_gid(gid)
-                        self.mapSurface.blit(tile,(32*x,32*y))
+                        self.mapSurface.blit(tile,(32*x-32,32*y-32))
     def draw(self,surface):
         surface.blit(self.mapSurface,(0,0))

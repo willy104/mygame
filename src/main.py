@@ -20,10 +20,11 @@ pygame.display.set_caption("game")
 #載入
 playerimg=pygame.image.load("assets/image/character.png").convert()
 playereye=pygame.image.load("assets/image/ceyes.png").convert_alpha()
-particleimg=pygame.image.load("assets/image/particle1.png").convert_alpha()
+particleimg=pygame.image.load("assets/image/particle_yellow.png").convert_alpha()
 fireballimg=pygame.image.load("assets/image/fireball.png").convert_alpha()
-fireballparimg=pygame.image.load("assets/image/particle2.png").convert_alpha()
+fireballparimg=pygame.image.load("assets/image/particle_red.png").convert_alpha()
 bounceballimg=pygame.image.load("assets/image/bounceball.png").convert_alpha()
+bounceballparimg=pygame.image.load("assets/image/particle_blue.png").convert_alpha()
 targetimg=pygame.image.load("assets/image/targetlogo.png").convert_alpha()
 
 
@@ -31,7 +32,7 @@ world=World("assets/testmap1.tmx")
 
 
 q,w,e=1,2,3
-player=Player(32,480,q,w,e,playerimg,playereye,particleimg,fireballimg,fireballparimg,bounceballimg)
+player=Player(32,480,q,w,e,playerimg,playereye,particleimg,fireballimg,fireballparimg,bounceballimg,bounceballparimg)
 target=TargetLogo(targetimg)
 
 

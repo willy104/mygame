@@ -37,18 +37,28 @@ class Projectile:
             if p.life<=0:
                 particles.remove(p)
     def physic_bounce(self,pre_rect,tile):
+        nx,ny=0,0
         if pre_rect.right <= tile.left and self.rect.right >tile.left:
             self.rect.right=tile.left
-            self.vx*=-1
+            nx,ny= 1,0
         elif pre_rect.left >= tile.right and self.rect.left < tile.right:
             self.rect.left=tile.right
-            self.vx*=-1
+            nx,ny= -1,0
         elif pre_rect.top >= tile.bottom and self.rect.top < tile.bottom:
             self.rect.top=tile.bottom
-            self.vy*=-1
+            nx,ny= 0,1
         elif pre_rect.bottom <= tile.top and self.rect.bottom > tile.top:
             self.rect.bottom=tile.top
-            self.vy*=-1
+            nx,ny= 0,-1
+                
+        if nx == 0 and ny == 0:
+            return
+
+        #反彈計算
+        dot = self.vx * nx + self.vy * ny
+        self.vx = self.vx - 2 * dot * nx
+        self.vy = self.vy - 2 * dot * ny
+        # 同步位置
         self.x,self.y=self.rect.center
         self.angle=math.degrees(math.atan2(-self.vy,self.vx))
 class Fireball(Projectile):
@@ -57,7 +67,7 @@ class Fireball(Projectile):
         self.pimg=pimg
         super().__init__(x,y,img,a)
     def update(self,dt):
-        particles.append(Particle(self.x-3,self.y-3,random.uniform(-50,50),random.uniform(-50,50),0,self.pimg))
+        particles.append(Particle(self.x-3,self.y-3,random.uniform(-50,50),random.uniform(-50,50),0,random.uniform(0.3,0.5),self.pimg))
         self.x+=self.vx*dt
         self.y+=self.vy*dt
         if self.isY:
@@ -95,6 +105,8 @@ class Bounceball(Projectile):
             if self.rect.colliderect(tile):
                 Projectile.physic_bounce(self,self.pre_rect,tile)
                 self.bounce-=1
+                for _ in range(5):
+                    particles.append(Particle(self.x-3,self.y-3,random.uniform(-50,50),random.uniform(-50,50),0,0.3,self.pimg))
                 break
         if self.bounce<=0:
             self.life=0
