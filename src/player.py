@@ -62,6 +62,7 @@ class Player:
                     self.double_jump=False
         else:
             self.space_down=False
+            
     def move_x(self,dt,collision_rect):
         self.rect.x+=self.vx*dt
         for tile in collision_rect:

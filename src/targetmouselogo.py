@@ -9,4 +9,4 @@ class TargetLogo:
         self.x=mx
         self.y=my
     def draw(self,nowsurface):
-        nowsurface.blit(self.img,(self.x-7,self.y-7))
+        nowsurface.blit(self.img,(self.x-10,self.y-10))
