@@ -62,7 +62,7 @@ class Player:
                     self.double_jump=False
         else:
             self.space_down=False
-            
+        print(self.double_jump,self.on_ground)
     def move_x(self,dt,collision_rect):
         self.rect.x+=self.vx*dt
         for tile in collision_rect:
@@ -80,12 +80,12 @@ class Player:
             if self.rect.colliderect(tile):
                 if self.vy>0:
                     self.rect.bottom=tile.top
-                    self.vy=0
+                    self.vy=16
                     self.on_ground=True
                     self.double_jump=True
                 if self.vy<0:
                     self.rect.top=tile.bottom
-                    self.vy=0
+                    self.vy=16
         if  abs(self.vy)>30 and not random.randint(0,4):
             particles.append(Particle(self.rect.x+16,self.rect.y+16,random.uniform(-30,30),random.uniform(-30,30),0,random.uniform(0.3,0.5),self.pimg))
     def update(self,dt,collision_rect):
