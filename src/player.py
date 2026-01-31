@@ -16,7 +16,8 @@ skill_key=[pygame.K_q,pygame.K_w,pygame.K_e]
 k_down=[False,False,False]
 #player
 class Player:
-    def __init__(self,x,y,s1,s2,s3,pimage,eyeimg,p_yellow,proimg,p_red,bounceballimg,p_blue,p_orange):
+    def __init__(self,x,y,s1,s2,s3,pimage,eyeimg,proimg,bounceballimg,colors):
+        self.skill_cd_surface=pygame.Surface((184,64),pygame.SRCALPHA)
         #position
         self.vx=0
         self.vy=0
@@ -29,15 +30,17 @@ class Player:
         self.eye=eyeimg
         self.proimg=proimg
         self.rect=self.image.get_rect(topleft=(x,y))
-        self.p_red=p_red
+        self.p_red=colors["red"]
         self.bounceballimg=bounceballimg
-        self.p_blue=p_blue
+        self.p_blue=colors["blue"]
+        self.p_green=colors["green"]
+        self.p_gray=colors["gray"]
         #else
         self.g=1200
         self.on_ground=False
         self.double_jump=False
-        self.p_yellow=p_yellow
-        self.p_orange=p_orange
+        self.p_yellow=colors["yellow"]
+        self.p_orange=colors["orange"]
         self.q_down=False
         self.w_down=False
         self.e_down=False
@@ -113,15 +116,21 @@ class Player:
                 if self.movement_skill_using:
                     self.vx=0
                 break
-        if  abs(self.vy)>30 and not random.randint(0,4):
+        if self.movement_skill_using:
+            particles.append(Particle(self.rect.x+16,self.rect.y+16,0,0,0,0.3,self.p_gray))
+        elif  abs(self.vy)>30 and not random.randint(0,4):
             particles.append(Particle(self.rect.x+16,self.rect.y+16,random.uniform(-30,30),random.uniform(-30,30),0,random.uniform(0.3,0.5),self.p_yellow))
-
     def update(self,dt,collision_rect):
+        self.skill_cd_surface.fill((0,0,0,0))
         self.mx,self.my=pygame.mouse.get_pos()
         self.handle_input()
         self.move_x(dt,collision_rect)
         self.move_y(dt,collision_rect)
-        for sk in skill123:
+        for i,sk in enumerate(skill123):
+            h=56*(sk.cd-sk.cooling)/sk.cd
+            if sk.cooling>0:
+                skill_cd_rect=pygame.Rect(5+i*60,5+h,56,56-h)
+                pygame.draw.rect(self.skill_cd_surface,(0,0,0,150),skill_cd_rect)
             sk.update(dt)
             if sk.smallcd==0 and sk.amount>0:
                 sk.smallcd=sk.atkspeed
@@ -147,6 +156,7 @@ class Player:
             dy=5
         if dy<-7:
             dy=-7
+        Projectile.draw_particles(self,dt,nowsurface)
         self.eyerect=self.eye.get_rect(center=(self.rect.x+16+dx,self.rect.y+16+dy))
         nowsurface.blit(self.image,self.rect)
         nowsurface.blit(self.eye,self.eyerect)
@@ -160,7 +170,7 @@ class Player:
             f.draw(nowsurface,dt)
             if f.life<=0:
                 projectiles.remove(f)
-        Projectile.draw_particles(self,dt,nowsurface)
+        
 
     def summon_projectile(self,name,collision_rect):
         if name=="fireball":

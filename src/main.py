@@ -24,21 +24,44 @@ playerimg=pygame.image.load("assets/image/character.png").convert()
 playereye=pygame.image.load("assets/image/ceyes.png").convert_alpha()
 fireballimg=pygame.image.load("assets/image/fireball.png").convert_alpha()
 bounceballimg=pygame.image.load("assets/image/bounceball.png").convert_alpha()
+skillbarimg=pygame.image.load("assets/image/skillbar.png").convert_alpha()
+fireballicon=pygame.image.load("assets/image/fireballicon.png").convert_alpha()
+bounceballicon=pygame.image.load("assets/image/bounceballicon.png").convert_alpha()
+dashicon=pygame.image.load("assets/image/dashicon.png").convert_alpha()
+
 
 targetimg=pygame.image.load("assets/image/targetlogo.png").convert_alpha()
 p_red=pygame.image.load("assets/image/particle_red.png").convert_alpha()
 p_orange=pygame.image.load("assets/image/particle_orange.png").convert_alpha()
 p_yellow=pygame.image.load("assets/image/particle_yellow.png").convert_alpha()
 p_blue=pygame.image.load("assets/image/particle_blue.png").convert_alpha()
-
+p_green=pygame.image.load("assets/image/particle_green.png").convert_alpha()
+p_gray=pygame.image.load("assets/image/particle_gray1.png").convert_alpha()
+Colors={
+    "red":p_red,
+    "orange":p_orange,
+    "yellow":p_yellow,
+    "green":p_green,
+    "blue":p_blue,
+    "gray":p_gray
+    }
 
 
 world=World("assets/testmap1.tmx")
 
 
 q,w,e=1,2,3
-player=Player(32,480,q,w,e,playerimg,playereye,p_yellow,fireballimg,p_red,bounceballimg,p_blue,p_orange)
+player=Player(32,480,q,w,e,playerimg,playereye,fireballimg,bounceballimg,Colors)
 target=TargetLogo(targetimg)
+
+icnos=[fireballicon,bounceballicon,dashicon]
+skillbar_base=pygame.Surface((184,64))
+skillbar_base.blit(skillbarimg,(0,0))
+skillbar_base.blit(icnos[q-1],(4,4))
+skillbar_base.blit(icnos[w-1],(64,4))
+skillbar_base.blit(icnos[e-1],(124,4))
+
+skillbar=pygame.Surface((184,64))
 
 
 dt=0
@@ -54,6 +77,9 @@ while run:
     gameSurface.fill((119,221,255))
     player.update(dt,world.collision_rects)
     world.draw(gameSurface)
+    skillbar.blit(skillbar_base,(0,0))
+    skillbar.blit(player.skill_cd_surface,(0,0))
+    gameSurface.blit(skillbar,(0,578))
     mx,my=pygame.mouse.get_pos()
     player.draw(gameSurface,dt)
     target.update(mx,my)
