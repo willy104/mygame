@@ -61,30 +61,40 @@ class Projectile:
         self.x,self.y=self.rect.center
         self.angle=math.degrees(math.atan2(-self.vy,self.vx))'''
 class Fireball(Projectile):
-    def __init__(self,x,y,img,pimg,a=2000):
-        self.pimg=pimg
+    def __init__(self,x,y,img,pimg,pimg2,collision_rect,a=2000):
         super().__init__(x,y,img,a)
+        self.pimg=pimg
+        self.pimg2=pimg2
+        self.collision_rect=collision_rect
+        self.r_img=pygame.transform.rotate(img,self.angle)
+        self.r_rect=self.r_img.get_rect(center=(self.x,self.y))
+        
     def update(self,dt):
         particles.append(Particle(self.x-3,self.y-3,random.uniform(-50,50),random.uniform(-50,50),0,random.uniform(0.3,0.5),self.pimg))
         self.x+=self.vx*dt
         self.y+=self.vy*dt
+        self.r_rect.center=(self.x,self.y)
         if self.D>0:
             self.vx+=self.a*self.wx*dt
             self.vy+=self.a*self.wy*dt
         else:
             self.vx+=self.a*dt
-        if abs(self.vx)>2000 or abs(self.vy)>2000:
-            self.life=0
+        for tile in self.collision_rect:
+            if self.r_rect.colliderect(tile):
+                for i in range(10):
+                    particles.append(Particle(self.x-3,self.y-3,random.uniform(-100,100),random.uniform(-100,100),0,random.uniform(0.5,0.8),self.pimg))
+                    particles.append(Particle(self.x-3,self.y-3,random.uniform(-100,100),random.uniform(-100,100),0,random.uniform(0.5,0.8),self.pimg2))
+                self.life=0
     def draw(self,nowsurface,dt):
-        self.r_img=pygame.transform.rotate(self.img,self.angle)
-        self.r_rect=self.r_img.get_rect(center=(self.x,self.y))
+        
         nowsurface.blit(self.r_img,self.r_rect.topleft)
+        #pygame.draw.rect(nowsurface,(255,0,0),self.r_rect,2)
         #pygame.draw.circle(nowsurface, (0, 0, 0), (int(self.x), int(self.y)), 3)
 
 
 
 class Bounceball(Projectile):
-    def __init__(self,x,y,img,pimg,collision_rect,speed,bounce=10):
+    def __init__(self,x,y,img,pimg,collision_rect,speed,bounce=5):
         super().__init__(x,y,img,0,bounce,speed)
         self.pimg=pimg
         self.collision_rect=collision_rect
