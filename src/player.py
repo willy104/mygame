@@ -3,6 +3,7 @@ from particle import Particle
 from projectile import Projectile
 from projectile import Fireball
 from projectile import Bounceball
+from projectile import Lance
 from skills import SKILLS
 from skillmanager import SkillManager
 import math
@@ -16,7 +17,7 @@ skill_key=[pygame.K_q,pygame.K_w,pygame.K_e]
 k_down=[False,False,False]
 #player
 class Player:
-    def __init__(self,x,y,s1,s2,s3,pimage,eyeimg,proimg,bounceballimg,colors):
+    def __init__(self,x,y,s1,s2,s3,skillimg,colors):
         self.skill_cd_surface=pygame.Surface((184,64),pygame.SRCALPHA)
         #position
         self.vx=0
@@ -26,21 +27,24 @@ class Player:
         self.speed=200
         self.movement_skill_using=False
         #img
-        self.image=pimage
-        self.eye=eyeimg
-        self.proimg=proimg
+        self.image=skillimg["playerimg"]
+        self.eye=skillimg["playereyeimg"]
         self.rect=self.image.get_rect(topleft=(x,y))
-        self.p_red=colors["red"]
-        self.bounceballimg=bounceballimg
-        self.p_blue=colors["blue"]
+
+        self.fireballimg=skillimg["fireball"]
+        self.bounceballimg=skillimg["bounceball"]
+        self.lanceimg=skillimg["lance"]
+        
+        self.p_red=colors["red"]        
+        self.p_orange=colors["orange"]
+        self.p_yellow=colors["yellow"]
         self.p_green=colors["green"]
+        self.p_blue=colors["blue"]
         self.p_gray=colors["gray"]
         #else
         self.g=1200
         self.on_ground=False
         self.double_jump=False
-        self.p_yellow=colors["yellow"]
-        self.p_orange=colors["orange"]
         self.q_down=False
         self.w_down=False
         self.e_down=False
@@ -52,6 +56,7 @@ class Player:
         skill123.append(SkillManager(s2))
         skill123.append(SkillManager(s3))
         self.casting=False
+        self.castimgnum=None
     def handle_input(self):
         keys=pygame.key.get_pressed()
         if not self.movement_skill_using:
@@ -59,9 +64,9 @@ class Player:
             if keys[pygame.K_a]:
                 self.vx=-self.speed
             if keys[pygame.K_d]:
-                self.vx+=self.speed
+                self.vx=self.speed
 
-            if keys[pygame.K_SPACE]:
+            if keys[pygame.K_SPACE] and self.castimgnum is None:
                 if self.on_ground or (self.double_jump and not self.space_down):
                     for _ in range(20):
                         particles.append(Particle(self.rect.x+16,self.rect.y+32,random.uniform(-50,50),random.uniform(100,200),300,random.uniform(0.3,0.5),self.p_yellow))
@@ -74,17 +79,28 @@ class Player:
             if not self.casting:
                 for i in range(3):
                     if keys[skill_key[i]]:
-                        
                         if skill123[i].cooling == 0 and k_down[i]==False:
-                            skill123[i].skilluse(self)
-                            k_down[i]=True
-                            break
+                            self.lx=self.vx
+                            if skill123[i].aim=="hold":
+                                self.castimgnum=i
+                                self.casting=True
+                            else:    
+                                skill123[i].skilluse(self)
+                                self.use_movement_skill(skill123[i].skillname,skill123[i].speed)
+                                k_down[i]=True
+                                break
                     else:
                         k_down[i]=False
-        
+            elif self.castimgnum is not None and not keys[skill_key[self.castimgnum]]:
+                skill123[self.castimgnum].skilluse(self)
+                self.use_movement_skill(skill123[self.castimgnum].skillname,skill123[self.castimgnum].speed)
+                self.castimgnum=None
     def move_x(self,dt,collision_rect):
         self.vx+=self.ax*dt
-        self.rect.x+=self.vx*dt
+        if not self.on_ground and self.castimgnum is not None:
+            self.rect.x+=self.lx*dt/4
+        else:
+            self.rect.x+=self.vx*dt
         for tile in collision_rect:
             if self.rect.colliderect(tile):
                 if self.vx>0:
@@ -95,12 +111,16 @@ class Player:
                     self.vy=0
                 break
     def move_y(self,dt,collision_rect):
+        
+
         if self.movement_skill_using:
             self.vy+=self.ay*dt
         else:
             self.vy+=self.g*dt
-        
-        self.rect.y+=self.vy*dt
+        if self.castimgnum is not None:
+            self.rect.y+=min(50,self.vy)*dt
+        else:
+            self.rect.y+=self.vy*dt
         self.on_ground=False
 
         for tile in collision_rect:
@@ -174,9 +194,10 @@ class Player:
 
     def summon_projectile(self,name,collision_rect):
         if name=="fireball":
-            projectiles.append(Fireball(self.rect.x+16,self.rect.y+16,self.proimg,self.p_red,self.p_orange,collision_rect))
+            projectiles.append(Fireball(self.rect.x+16,self.rect.y+16,self.fireballimg,self.p_red,self.p_orange,collision_rect))
         if name=="bounceball":
             projectiles.append(Bounceball(self.rect.x+16,self.rect.y+16,self.bounceballimg,self.p_blue,collision_rect,500))
     
-    def use_movement_skill(self,name):
-        pass
+    def use_movement_skill(self,name,speed):
+        if name=="lance":
+            projectiles.append(Lance(self.rect.x+16,self.rect.y+16,self.lanceimg,speed,self))

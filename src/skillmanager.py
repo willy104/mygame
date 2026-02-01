@@ -11,6 +11,7 @@ class SkillManager:
         self.atkspeed=SKILLS[id]["atkspeed"]
         self.aim=SKILLS[id]["aim"]
         self.type=SKILLS[id]["type"]
+        self.speed=SKILLS[id]["speed"]
         self.cooling=0
         self.smallcd=0
         self.amount=0
@@ -27,10 +28,10 @@ class SkillManager:
             if D>0:
                 wx=(dx/D)
                 wy=(dy/D)
-                player.vx=wx*1600
-                player.vy=wy*1600
+                player.vx=wx*self.speed
+                player.vy=wy*self.speed
             else:
-                player.vx=1600
+                player.vx=self.speed
                 player.vy=0
             self.angle=math.degrees(math.atan2(-player.vy,player.vx))
     def update(self,dt):

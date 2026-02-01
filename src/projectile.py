@@ -16,18 +16,17 @@ class Projectile:
         dx=mx-x
         dy=my-y
         self.D=math.hypot(dx,dy)
-        self.wx=(dx/self.D)
-        self.wy=(dy/self.D)
         if self.D>0:
-            self.vx=self.wx*self.speed
-            self.vy=self.wy*self.speed
+            self.wx=(dx/self.D)
+            self.wy=(dy/self.D)
         else:
-            self.vx=self.speed
-            self.vy=0
+            self.wx,self.wy=1,0
+        self.vx=self.wx*self.speed
+        self.vy=self.wy*self.speed
         self.angle=math.degrees(math.atan2(-self.vy,self.vx))
         self.a=a
         self.life=1
-        if not bounce==None:
+        if bounce is not None:
             self.bounce=bounce
     def draw_particles(self,dt,nowsurface):
         for p in particles[:]:
@@ -134,6 +133,21 @@ class Bounceball(Projectile):
     def draw(self,nowsurface,dt):
         self.r_img=pygame.transform.rotate(self.img,self.angle)
         self.r_rect=self.r_img.get_rect(center=(self.rect.center))
-        nowsurface.blit(self.r_img,self.rect.topleft)
+        nowsurface.blit(self.r_img,self.r_rect.topleft)
         #pygame.draw.rect(nowsurface,(255,0,0),self.r_rect,2)
         #pygame.draw.circle(nowsurface, (255, 0, 0), (int(self.x), int(self.y)), 3)
+
+class Lance(Projectile):
+    def __init__(self,x,y,img,Speed,player):
+        self.player=player
+        super().__init__(x,y,img,speed=Speed)
+    def update(self,dt):
+        self.rect.center=self.player.rect.center
+        if not self.player.movement_skill_using:
+            self.life=0
+    def draw(self,nowsurface,dt):
+        self.r_img=pygame.transform.rotate(self.img,self.angle)
+        self.r_rect=self.r_img.get_rect(center=(self.rect.center))
+        nowsurface.blit(self.r_img,self.r_rect.topleft)
+        #pygame.draw.rect(nowsurface,(255,0,0),self.r_rect,2)
+        #pygame.draw.circle(nowsurface, (0, 0, 0), (int(self.x), int(self.y)), 3)

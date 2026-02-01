@@ -24,11 +24,15 @@ playerimg=pygame.image.load("assets/image/character.png").convert()
 playereye=pygame.image.load("assets/image/ceyes.png").convert_alpha()
 fireballimg=pygame.image.load("assets/image/fireball.png").convert_alpha()
 bounceballimg=pygame.image.load("assets/image/bounceball.png").convert_alpha()
+lanceimg=pygame.image.load("assets/image/lance.png").convert_alpha()
+
 skillbarimg=pygame.image.load("assets/image/skillbar.png").convert_alpha()
+
+
 fireballicon=pygame.image.load("assets/image/fireballicon.png").convert_alpha()
 bounceballicon=pygame.image.load("assets/image/bounceballicon.png").convert_alpha()
 dashicon=pygame.image.load("assets/image/dashicon.png").convert_alpha()
-
+lanceicon=pygame.image.load("assets/image/lanceicon.png").convert_alpha()
 
 targetimg=pygame.image.load("assets/image/targetlogo.png").convert_alpha()
 p_red=pygame.image.load("assets/image/particle_red.png").convert_alpha()
@@ -46,15 +50,21 @@ Colors={
     "gray":p_gray
     }
 
-
+skillimg={
+    "playerimg":playerimg,
+    "playereyeimg":playereye,
+    "fireball":fireballimg,
+    "bounceball":bounceballimg,
+    "lance":lanceimg}
 world=World("assets/testmap1.tmx")
 
 
 q,w,e=1,2,3
-player=Player(32,480,q,w,e,playerimg,playereye,fireballimg,bounceballimg,Colors)
+player=Player(32,480,q,w,e,skillimg,Colors)
 target=TargetLogo(targetimg)
 
-icnos=[fireballicon,bounceballicon,dashicon]
+icnos=[fireballicon,bounceballicon,dashicon,lanceicon]
+
 skillbar_base=pygame.Surface((184,64))
 skillbar_base.blit(skillbarimg,(0,0))
 skillbar_base.blit(icnos[q-1],(4,4))
