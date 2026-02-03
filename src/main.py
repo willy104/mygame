@@ -22,6 +22,7 @@ pygame.display.set_caption("game")
 #載入
 playerimg=pygame.image.load("assets/image/character.png").convert()
 playereye=pygame.image.load("assets/image/ceyes.png").convert_alpha()
+pointing_arrow=pygame.image.load("assets/image/pointer.png").convert_alpha()
 fireballimg=pygame.image.load("assets/image/fireball.png").convert_alpha()
 bounceballimg=pygame.image.load("assets/image/bounceball.png").convert_alpha()
 lanceimg=pygame.image.load("assets/image/lance.png").convert_alpha()
@@ -51,6 +52,7 @@ Colors={
     }
 
 skillimg={
+    "pointing_arrowimg":pointing_arrow,
     "playerimg":playerimg,
     "playereyeimg":playereye,
     "fireball":fireballimg,
@@ -59,7 +61,7 @@ skillimg={
 world=World("assets/testmap1.tmx")
 
 
-q,w,e=1,2,3
+q,w,e=1,4,3
 player=Player(32,480,q,w,e,skillimg,Colors)
 target=TargetLogo(targetimg)
 

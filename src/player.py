@@ -30,6 +30,7 @@ class Player:
         self.image=skillimg["playerimg"]
         self.eye=skillimg["playereyeimg"]
         self.rect=self.image.get_rect(topleft=(x,y))
+        self.pointingarrowimg=skillimg["pointing_arrowimg"]
 
         self.fireballimg=skillimg["fireball"]
         self.bounceballimg=skillimg["bounceball"]
@@ -61,10 +62,11 @@ class Player:
         keys=pygame.key.get_pressed()
         if not self.movement_skill_using:
             self.vx=0
-            if keys[pygame.K_a]:
-                self.vx=-self.speed
-            if keys[pygame.K_d]:
-                self.vx=self.speed
+            if self.castimgnum is None:
+                if keys[pygame.K_a]:
+                    self.vx=-self.speed
+                if keys[pygame.K_d]:
+                    self.vx+=self.speed
 
             if keys[pygame.K_SPACE] and self.castimgnum is None:
                 if self.on_ground or (self.double_jump and not self.space_down):
@@ -176,10 +178,13 @@ class Player:
             dy=5
         if dy<-7:
             dy=-7
+        
         Projectile.draw_particles(self,dt,nowsurface)
         self.eyerect=self.eye.get_rect(center=(self.rect.x+16+dx,self.rect.y+16+dy))
         nowsurface.blit(self.image,self.rect)
         nowsurface.blit(self.eye,self.eyerect)
+        if self.castimgnum is not None:
+            self.draw_pointer_arrow(self.rect.x+16,self.rect.y+16,self.pointingarrowimg,nowsurface)
         for p in particles[:]:
             p.update(dt)
             p.draw(nowsurface)
@@ -201,3 +206,19 @@ class Player:
     def use_movement_skill(self,name,speed):
         if name=="lance":
             projectiles.append(Lance(self.rect.x+16,self.rect.y+16,self.lanceimg,speed,self))
+
+    def draw_pointer_arrow(self,x,y,img,nowsurface):
+        self.arr_rect = img.get_rect(center=(x, y))
+        mx,my=pygame.mouse.get_pos()
+        dx=mx-x
+        dy=my-y
+        self.D=math.hypot(dx,dy)
+        if self.D>0:
+            self.wx=(dx/self.D)
+            self.wy=(dy/self.D)
+        else:
+            self.wx,self.wy=1,0
+        self.angle=math.degrees(math.atan2(-self.wy,self.wx))
+        r_img=pygame.transform.rotate(img,self.angle)
+        r_rect=r_img.get_rect(center=(x,y))
+        nowsurface.blit(r_img,r_rect.topleft)

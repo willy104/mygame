@@ -140,9 +140,11 @@ class Bounceball(Projectile):
 class Lance(Projectile):
     def __init__(self,x,y,img,Speed,player):
         self.player=player
-        super().__init__(x,y,img,speed=Speed)
+        super().__init__(x,y,img,a=100,speed=Speed)
     def update(self,dt):
-        self.rect.center=self.player.rect.center
+        self.vx+=min(self.a*self.wx,15*self.wx)
+        self.vy+=min(self.a*self.wy,15*self.wy)
+        self.rect.center=(self.player.rect.centerx+self.vx*dt,self.player.rect.centery+self.vy*dt)
         if not self.player.movement_skill_using:
             self.life=0
     def draw(self,nowsurface,dt):
